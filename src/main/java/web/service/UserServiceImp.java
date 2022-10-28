@@ -3,8 +3,8 @@ package web.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import web.dao.UserDAO;
 import web.model.User;
+import web.repositorys.UserRepo;
 
 import java.util.List;
 
@@ -12,37 +12,38 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class UserServiceImp implements UserService {
 
-    private final UserDAO userDAO;
+    private final UserRepo userRepo;
     @Autowired
-    public UserServiceImp(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public UserServiceImp(UserRepo userRepo) {
+        this.userRepo = userRepo;
     }
 
     @Override
     @Transactional
     public void save(User user) {
-        userDAO.save(user);
+        userRepo.save(user);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        userDAO.delete(id);
+        userRepo.deleteById(id);
     }
 
     @Override
     @Transactional
     public void update(Long id, User updateUser) {
-        userDAO.update(id, updateUser);
+        updateUser.setId(id);
+        userRepo.save(updateUser);
     }
 
     @Override
     public User getOne(Long id) {
-        return userDAO.getOne(id);
+        return userRepo.findById(id).orElse(null);
     }
 
     @Override
     public List<User> getAll() {
-        return userDAO.getAll();
+        return userRepo.findAll();
     }
 }
